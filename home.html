@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: url('bg.jpg') center/cover no-repeat; 
+            background-size: cover;
+            position: relative; 
+            height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3); 
+            filter: blur(8px); 
+            z-index: -1; 
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8); 
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin: 10px 0;
+        }
+
+        p, label, select, button {
+            margin: 10px 0;
+        }
+
+        #status {
+            margin-top: 20px;
+        }
+        #claimButton {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ration Card Management</h1>
+        <p id="rationCardNumber"></p>
+        
+        <label for="itemSelect">Select an item:</label>
+        <select id="itemSelect">
+            <option value="rice">Rice</option> 
+            <option value="wheat">Wheat</option> 
+            <option value="sugar">Sugar</option> 
+            <option value="oil">Oil</option> 
+            <option value="salt">Salt</option>
+        </select>
+        
+        <div id="status"></div>
+        <button id="claimButton">Claim Pending Items</button>
+        <button onclick="window.location.href='pending-items.html'">Go to Pending Items</button>
+        <button onclick="window.location.href='complain.html'">Complain</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const rationCardNumber = 1209456
+            document.getElementById('rationCardNumber').textContent = `Ration Card Number: ${rationCardNumber}`;
+            
+            async function fetchRationStatus() {
+                const response = await fetch('http://localhost:5000/getRationStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ rationCardNumber })
+                });
+                const data = await response.json();
+                return data.items;
+            }
+
+            async function updateStatus(itemName) {
+                const items = await fetchRationStatus();
+                const item = items.find(i => i.name === itemName);
+                if (item) {
+                    document.getElementById('status').textContent = `Status: ${item.status}, Quantity: ${item.quantity_kg || item.quantity_litres} kg/litres`;
+                } else {
+                    document.getElementById('status').textContent = 'Item not found';
+                }
+            }
+
+            document.getElementById('itemSelect').addEventListener('change', (event) => {
+                updateStatus(event.target.value);
+            });
+
+            document.getElementById('claimButton').addEventListener('click', async () => {
+                const response = await fetch('http://localhost:5000/claimItems', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ rationCardNumber })
+                });
+                if (response.ok) {
+                    alert('Pending items claimed successfully!');
+                    updateStatus(document.getElementById('itemSelect').value);
+                } else {
+                    alert('Failed to claim items');
+                }
+            });
+
+            updateStatus(document.getElementById('itemSelect').value);
+        });
+    </script>
+</body>
+</html>

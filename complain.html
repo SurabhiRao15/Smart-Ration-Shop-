@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complain</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            height: 100px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #5cb85c;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Complain</h2>
+        <form id="complainForm">
+            <div class="form-group">
+                <label for="issue">Decribe your issue:</label>
+                <textarea id="issue" name="issue" required></textarea>
+            </div>
+            <button type="submit">Submit Complaint</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('complainForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const issue = document.getElementById('issue').value;
+
+            console.log('Complaint submitted:', issue);
+            alert('Your complaint has been submitted!');
+            document.getElementById('complainForm').reset();
+        });
+    </script>
+</body>
+</html>
